@@ -5,7 +5,7 @@ a simulated UAE telecom contact centre with 12,000 call records spanning 15 mont
 (January 2024 – March 2025).
 
 The same database underpins three separate projects, each demonstrating a different
-layer of the analytics workflow. Built by someone with 6+ years working inside BPO
+layer of the analytics workflow. Built by someone with 7+ years working inside BPO
 and contact centre operations in Cairo and Dubai — the schema, KPI definitions, and
 target benchmarks reflect real reporting requirements, not textbook examples.
 
