@@ -4,7 +4,7 @@
   Author     : Mahmoud Metawea
 
   Built to reflect the kind of operational data I have worked
-  with across 6+ years in BPO and contact centre environments.
+  with across 7+ years in BPO and contact centre environments.
   The schema, KPI definitions, and target benchmarks are based
   on real reporting requirements from inbound/outbound operations
   in the UAE telecom sector.
