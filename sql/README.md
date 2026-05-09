@@ -2,7 +2,7 @@
 
 A full end-to-end SQL Server project simulating the operational database of a UAE-based
 telecom contact centre. Built to demonstrate practical SQL skills applied to a domain
-I have worked in for 6+ years across BPO and contact centre environments in Cairo and Dubai.
+I have worked in for 7+ years across BPO and contact centre environments in Cairo and Dubai.
 
 ---
 
