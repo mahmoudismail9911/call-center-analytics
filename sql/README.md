@@ -53,6 +53,20 @@ Run `01_database_build.sql` first, then `02_analysis.sql`.
 | Q7 | Top 3 agents per queue ranked by CSAT using RANK with PARTITION |
 | Q8 | Running YTD call volume by channel using cumulative window function |
 
+## Sample Outputs
+
+### Monthly Call Volume Trends
+![Monthly Call Volume](screenshots/monthly-call-volume.png)
+
+### Abandon Rate by Time Interval
+![Abandon Rate](screenshots/abandon-rate-per-interval.png)
+
+### NPS Segmentation Analysis
+![NPS Segmentation](screenshots/nps-segmentation.png)
+
+### Queue Performance Comparison
+![Queue Performance](screenshots/queue-performance.png)
+
 **Section 2 — Target vs Actual Variance**
 
 Queue-level variance across SLA, AHT, CSAT, FCR, and Abandon Rate with Met / Missed
