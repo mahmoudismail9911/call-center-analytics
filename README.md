@@ -1,32 +1,29 @@
-# Call Center Analytics Portfolio
+# Call Center Analytics — SQL Server Project
 
-An end-to-end analytics portfolio built around a single operational dataset —
-a simulated UAE telecom contact centre with 12,000 call records spanning 15 months
-(January 2024 – March 2025).
+A full end-to-end SQL Server project simulating the operational database of a UAE-based
+telecom contact centre — 12,000 call records spanning 15 months (January 2024 – March 2025).
 
-The same database underpins three separate projects, each demonstrating a different
-layer of the analytics workflow. Built by someone with 7+ years working inside BPO
-and contact centre operations in Cairo and Dubai — the schema, KPI definitions, and
-target benchmarks reflect real reporting requirements, not textbook examples.
-
----
-
-## Projects
-
-| # | Folder | Tool | Status | What It Covers |
-|---|--------|------|--------|----------------|
-| 1 | `sql/` | SQL Server | Complete | Star schema design, 12,000-row dataset, 8 analysis queries, target variance report, stored procedure |
-| 2 | `power_bi/` | Power BI | In Progress | Interactive operational dashboard — KPIs, SLA tracking, agent scorecard |
-| 3 | `excel/` | Excel | In Progress | Data cleaning on a dirty extract of the dataset, pivot analysis, charts |
-
-Each folder contains its own README with setup instructions and detail.
-Run the SQL project first — the Power BI and Excel projects are built on top of the same database.
+Built to demonstrate practical SQL skills applied to a domain I have worked in for
+7+ years across BPO and contact centre environments in Cairo and Dubai — the schema,
+KPI definitions, and target benchmarks reflect real reporting requirements, not
+textbook examples.
 
 ---
 
-## The Dataset
+## Files
 
-**Star schema — 1 fact table, 7 dimension tables**
+| File | Description |
+|------|-------------|
+| `01_database_build.sql` | Schema design, data population, indexes, and data quality checks |
+| `02_analysis.sql` | KPI analysis queries, target variance reporting, and stored procedure |
+
+Run `01_database_build.sql` first, then `02_analysis.sql`.
+
+---
+
+## Database Design
+
+**Star schema — 1 fact table, 7 dimension tables, 12,000 call records**
 
 | Table | Description |
 |-------|-------------|
@@ -40,8 +37,60 @@ Run the SQL project first — the Power BI and Excel projects are built on top o
 | `dim_targets` | Contracted KPI targets per queue for variance analysis |
 
 **Date range (calls):** 01 January 2024 – 31 March 2025
-**Date range (dim_date):** 01 January 2024 – 31 December 2025 (extended for Power BI time intelligence)
-**Volume:** 12,000 calls
+**Date range (dim_date):** 01 January 2024 – 31 December 2025 (extended beyond the call data for forward-looking time intelligence queries)
+
+### Schema Diagram
+
+![ERD](ERD.png)
+
+---
+
+## What the Analysis Covers
+
+**Section 1 — Analysis Queries (Q1–Q8)**
+
+| Query | Focus |
+|-------|-------|
+| Q1 | Monthly call volume — offered, answered, abandoned — with SLA %, AHT, and average wait time trend |
+| Q2 | Agent performance scorecard ranked by CSAT |
+| Q3 | Abandon rate by hour of day |
+| Q4 | NPS segmentation — Detractors, Passives, and Promoters with Net NPS |
+| Q5 | Queue performance comparison — volume, AHT, CSAT, and FCR |
+| Q6 | Month-over-month call volume change using LAG window function |
+| Q7 | Top 3 agents per queue ranked by CSAT using RANK with PARTITION |
+| Q8 | Running YTD call volume by channel using cumulative window function |
+
+### Sample Outputs
+
+**Monthly Call Volume Trends**
+![Monthly Call Volume](screenshots/monthly-call-volume.png)
+
+**Abandon Rate by Time Interval**
+![Abandon Rate](screenshots/abandon-rate-per-interval.png)
+
+**NPS Segmentation Analysis**
+![NPS Segmentation](screenshots/nps-segmentation.png)
+
+**Queue Performance Comparison**
+![Queue Performance](screenshots/queue-performance.png)
+
+**Section 2 — Target vs Actual Variance**
+
+Queue-level variance across SLA, AHT, CSAT, FCR, and Abandon Rate with Met / Missed
+status flags. Variance column shows the exact gap against contracted targets.
+
+**Section 3 — Stored Procedure**
+
+`usp_MonthlyPerformanceReport` accepts `@Year` and `@Month` parameters and returns
+three result sets:
+
+1. Overall monthly KPI summary — volume, abandon rate, SLA, AHT, CSAT, NPS, FCR
+2. Queue breakdown with SLA variance vs contracted target and Met / Missed status flag
+3. Top 10 agents ranked by CSAT for the selected month
+
+```sql
+EXEC dbo.usp_MonthlyPerformanceReport @Year = 2024, @Month = 6;
+```
 
 ---
 
@@ -50,7 +99,7 @@ Run the SQL project first — the Power BI and Excel projects are built on top o
 | KPI | Definition |
 |-----|------------|
 | SLA | Wait time ≤ 20 seconds = Met |
-| AHT | Talk time + Hold time + After Call Work |
+| AHT | Talk time + Hold time + After Call Work. Abandoned calls excluded — handle time = 0 |
 | CSAT | Post-call IVR score (1–5). Not recorded for abandoned and voicemail calls — excluded from the calculation automatically via NULL |
 | NPS | Net Promoter Score (0–10) recorded per connected call |
 | FCR | First call resolution flag. Not recorded for abandoned and voicemail calls — excluded from the calculation automatically via NULL |
@@ -58,8 +107,21 @@ Run the SQL project first — the Power BI and Excel projects are built on top o
 
 ---
 
+## SQL Techniques Used
+
+- Star schema design with primary and foreign keys
+- CTEs (Common Table Expressions) for multi-step aggregations
+- Window functions — `RANK()`, `RANK() OVER (PARTITION BY)`, `LAG()`, cumulative `SUM() OVER()`
+- `CASE WHEN` logic for KPI status flags, NPS segmentation, and conditional metric exclusions
+- `NULLIF` and `CAST` for safe division and type handling
+- Parameterised stored procedure with input validation and `RAISERROR`
+- Non-clustered indexes on foreign key columns for query performance
+- Data quality checks — NULL detection, orphaned records, duplicate identification,
+  out-of-range scores, disposition standardisation, FCR nullification for non-applicable calls
+
+---
+
 ## Tools
 
-- SQL Server 2019+ / T-SQL
-- Power BI Desktop
-- Microsoft Excel (with Power Query)
+- SQL Server 2019+
+- T-SQL
